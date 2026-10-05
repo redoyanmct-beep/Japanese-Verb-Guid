@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japanese Verb Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #f5f2ee; font-family: Georgia, serif; padding-bottom: 60px; }
+
+  /* HEADER */
+  .header { background: #1a1410; padding: 36px 24px 28px; text-align: center; border-bottom: 4px solid #e8621a; }
+  .header-label { font-size: 12px; letter-spacing: 4px; color: #c97d00; text-transform: uppercase; margin-bottom: 10px; font-family: monospace; }
+  .header h1 { font-size: clamp(22px, 5vw, 40px); color: #f5f0e8; letter-spacing: 2px; font-weight: 400; }
+  .header-sub { margin-top: 6px; font-size: 13px; color: #8a7f70; }
+
+  /* SECTION TABS */
+  .section-tabs {
+    display: flex; gap: 0; background: #221c14;
+    border-bottom: 2px solid #2a2218; overflow-x: auto; scrollbar-width: none;
+  }
+  .section-tabs::-webkit-scrollbar { display: none; }
+  .stab {
+    flex-shrink: 0; padding: 12px 18px; font-size: 12px;
+    color: #6a6050; cursor: pointer; font-family: monospace;
+    border-bottom: 3px solid transparent; transition: all 0.2s;
+    white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .stab.active { color: #e8621a; border-bottom-color: #e8621a; background: #1a1410; }
+  .stab:hover { color: #c09070; }
+
+  /* MAIN CONTENT */
+  .section { display: none; padding: 24px 16px; max-width: 1000px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* GROUP CARDS */
+  .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; margin-bottom: 24px; }
+
+  .group-card { border-radius: 14px; border: 2px solid; overflow: hidden; }
+  .group-header { padding: 16px 18px 12px; }
+  .group-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
+  .group-name { font-size: 17px; font-weight: 700; display: inline; }
+  .group-rule-box { margin-top: 10px; }
+  .rule-item { font-size: 12px; font-family: monospace; padding: 4px 0; line-height: 1.7; color: #3a3020; }
+  .group-body { padding: 12px 18px 14px; }
+  .examples-label { font-size: 10px; letter-spacing: 2px; font-family: monospace; margin-bottom: 8px; }
+  .ex-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px dashed; }
+  .ex-row:last-child { border-bottom: none; }
+  .ex-jp { font-size: 14px; min-width: 120px; }
+  .ex-arrow { color: #c0b8a8; font-size: 12px; }
+  .ex-result { font-size: 14px; font-weight: 600; }
+  .ex-bn { font-size: 11px; color: #8a7f70; margin-left: auto; font-style: italic; }
+
+  /* EXCEPTION BOX */
+  .exception-box { border-radius: 10px; padding: 12px 14px; margin-top: 10px; border: 1px dashed; }
+  .exception-title { font-size: 11px; font-family: monospace; letter-spacing: 1px; margin-bottom: 6px; }
+
+  /* CONVERSION TABLE */
+  .conv-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-family: monospace; }
+  .conv-table td { padding: 4px 10px; font-size: 13px; }
+  .conv-table td:first-child { color: #4a5ff0; font-size: 15px; }
+  .conv-table td:nth-child(2) { color: #8a7f70; }
+  .conv-table td:last-child { color: #e8621a; font-size: 15px; }
+  .conv-table tr:nth-child(even) td { background: rgba(0,0,0,0.03); }
+
+  /* INFO BOX */
+  .info-box {
+    background: #fff8f0; border: 1px solid #e8d0b0; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 18px; font-size: 13px; line-height: 1.7; color: #4a3a28;
+  }
+  .info-box strong { color: #c97d00; }
+
+  /* TENSE TABLE */
+  .tense-section { margin-top: 8px; }
+  .tense-table-wrap { overflow-x: auto; border-radius: 12px; border: 2px solid #e8e0d4; margin-top: 14px; }
+  .tense-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+  .tense-table th { background: #1a1410; color: #c97d00; font-size: 12px; letter-spacing: 2px; font-family: monospace; padding: 12px 16px; text-align: left; }
+  .tense-table th:first-child { color: #8a7f70; }
+  .tense-table td { padding: 12px 16px; font-size: 14px; border-top: 1px solid #ede8e0; }
+  .tense-table tr:hover td { background: #faf7f4; }
+  .tense-table .tense-label { font-size: 12px; color: #8a7f70; font-family: monospace; }
+  .tense-table .jp-main { font-size: 16px; color: #1a1410; }
+  .tense-table .jp-form { font-size: 11px; font-family: monospace; padding: 2px 7px; border-radius: 5px; margin-left: 6px; }
+  .tense-table .bn { font-size: 12px; color: #6a6050; margin-top: 3px; }
+  .positive td:nth-child(2) { border-left: 3px solid #2a9d5c; }
+  .negative td:nth-child(2) { border-left: 3px solid #c0392b; }
+  .positive td:nth-child(3) { border-left: 3px solid #4a5ff0; }
+  .negative td:nth-child(3) { border-left: 3px solid #9b3dbf; }
+
+  .section-title { font-size: 16px; color: #1a1410; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e8e0d4; font-weight: 600; }
+  .section-title span { color: #e8621a; font-family: monospace; font-size: 13px; margin-left: 8px; font-weight: 400; }
+
+  .sub-title { font-size: 15px; color: #1a1410; margin: 24px 0 12px; font-weight: 600; }
+  .sub-title span { color: #e8621a; font-family: monospace; font-size: 12px; margin-left: 6px; }
+
+  .footer { text-align: center; color: #a09080; font-size: 12px; padding: 20px 16px 0; }
+
+  /* GROUP COLORS */
+  .g1 { border-color: #aac8f5; }
+  .g1 .group-header { background: #e8f0fd; }
+  .g1 .group-name { color: #1565c0; }
+  .g1 .group-dot { background: #1565c0; }
+  .g1 .group-body { background: #f5f9ff; }
+  .g1 .ex-row { border-color: #d0e4f8; }
+  .g1 .ex-result { color: #1565c0; }
+  .g1 .examples-label { color: #1565c0; }
+  .g1 .exception-box { background: #fff3e0; border-color: #e8a020; }
+  .g1 .exception-title { color: #c97d00; }
+
+  .g2 { border-color: #b8e8ca; }
+  .g2 .group-header { background: #e8f5ec; }
+  .g2 .group-name { color: #2a9d5c; }
+  .g2 .group-dot { background: #2a9d5c; }
+  .g2 .group-body { background: #f4fbf6; }
+  .g2 .ex-row { border-color: #c0e4cc; }
+  .g2 .ex-result { color: #2a9d5c; }
+  .g2 .examples-label { color: #2a9d5c; }
+  .g2 .exception-box { background: #fff0f0; border-color: #e88080; }
+  .g2 .exception-title { color: #c0392b; }
+
+  .g3 { border-color: #f5c0bb; }
+  .g3 .group-header { background: #fff0ee; }
+  .g3 .group-name { color: #c0392b; }
+  .g3 .group-dot { background: #c0392b; }
+  .g3 .group-body { background: #fff8f7; }
+  .g3 .ex-row { border-color: #f0d0cc; }
+  .g3 .ex-result { color: #c0392b; }
+  .g3 .examples-label { color: #c0392b; }
+
+  /* Summary boxes */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 20px; }
+  .summary-box { border-radius: 12px; padding: 14px; border: 2px solid; }
+  .summary-box .label { font-size: 11px; font-family: monospace; letter-spacing: 1px; margin-bottom: 8px; }
+  .summary-box .content { font-size: 13px; line-height: 2; font-family: monospace; color: #1a1410; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Japanese Grammar</div>
+  <h1>Japanese Verb Guide</h1>
+  <div class="header-sub">Verb Group চিনার উপায় এবং সহজে রূপ পরিবর্তনের নিয়ম</div>
+</div>
+
+<!-- SECTION TABS -->
+<div class="section-tabs">
+  <button class="stab active" data-sec="groups">🔵🟢🔴 Group চেনা</button>
+  <button class="stab" data-sec="te">て Form</button>
+  <button class="stab" data-sec="ta">た Form</button>
+  <button class="stab" data-sec="dict">Dictionary Form</button>
+  <button class="stab" data-sec="nai">ない Form</button>
+  <button class="stab" data-sec="nakatta">なかった Form</button>
+  <button class="stab" data-sec="potential">かのうけい Form</button>
+  <button class="stab" data-sec="volition">VOLITIONAL FORM</button>
+  <button class="stab" data-sec="possive">POSSIVE Form</button>
+  <button class="stab" data-sec="causative">CAUSATIVE Form</button>
+  <button class="stab" data-sec="conditional">じょうけんけい Form</button>
+  <button class="stab" data-sec="tense">Polite vs Plain</button>
+</div>
+
+<!-- ======================== SECTION: GROUPS ======================== -->
+<div class="section active" id="sec-groups">
+  <div class="section-title">Verb এর Group চেনার উপায়</div>
+  <div class="group-grid">
+
+    <!-- GROUP 1 -->
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="group-rule-box">
+          <div class="rule-item">✅ Stem-এর শেষ বর্ণ অবশ্যই <b>い কলামে</b> হতে হবে</div>
+          <div class="rule-item">✅ Stem-এ কমপক্ষে <b>২টি বর্ণ</b> থাকবে</div>
+          <div style="font-size:11px;color:#8a7f70;margin-top:6px;font-family:monospace">
+            き・し・ち・に・ひ・み・り・ぎ・じ・ぢ・び・ぴ
+          </div>
+        </div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→<span class="ex-bn">লেখা</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→<span class="ex-bn">পান করা</span></div>
+        <div class="ex-row"><span class="ex-jp">はなします</span><span class="ex-arrow">→<span class="ex-bn">কথা বলা</span></div>
+        <div class="ex-row"><span class="ex-jp">まちます</span><span class="ex-arrow">→<span class="ex-bn">অপেক্ষা করা</span></div>
+        <div class="ex-row"><span class="ex-jp">よみます</span><span class="ex-arrow">→<span class="ex-bn">পড়া</span></div>
+      </div>
+    </div>
+
+    <!-- GROUP 2 -->
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="group-rule-box">
+          <div class="rule-item">✅ Stem-এর শেষ বর্ণ <b>え কলামে</b> থাকবে</div>
+          <div class="rule-item">✅ Stem-এ মাত্র <b>১টি বর্ণ</b> থাকবে</div>
+        </div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→<span class="ex-bn">খাওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→<span class="ex-bn">দেখা</span></div>
+        <div class="ex-row"><span class="ex-jp">ねます</span><span class="ex-arrow">→<span class="ex-bn">ঘুমানো</span></div>
+        <div class="ex-row"><span class="ex-jp">あけます</span><span class="ex-arrow">→<span class="ex-bn">খোলা</span></div>
+        <div class="ex-row"><span class="ex-jp">でます</span><span class="ex-arrow">→<span class="ex-bn">বের হওয়া</span></div>
+        <div class="exception-box">
+          <div class="exception-title">❗ ব্যতিক্রম — দেখতে Group 1 এর মতো, কিন্তু আসলে Group 2</div>
+          <div style="font-size:12px;line-height:2;font-family:monospace;color:#5a4030">
+            かります (ধার করা) <br> たります (যথেষ্ট হওয়া) <br> おります (নামা) <br> あびます (গোসল করা) <br> おきます (ঘুম থেকে উঠা) <br> できます (পারা / সক্ষম হওয়া) <br> おちます (পড়ে যাওয়া) 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 3 -->
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="group-rule-box">
+          <div class="rule-item">✅ মাত্র <b>২টি Verb</b> — きます ও します</div>
+          <div class="rule-item">✅ Noun + します → compound verb</div>
+        </div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">きます</span><span class="ex-arrow">→</span><span class="ex-result">আসা</span></div>
+        <div class="ex-row"><span class="ex-jp">します</span><span class="ex-arrow">→</span><span class="ex-result">করা</span></div>
+        <div class="ex-row"><span class="ex-jp">べんきょう</span><span class="ex-arrow">+します→</span><span class="ex-result">べんきょうします</span><span class="ex-bn">পড়াশোনা করা</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわ</span><span class="ex-arrow">+します→</span><span class="ex-result">でんわします</span><span class="ex-bn">ফোন করা</span></div>
+        <div class="ex-row"><span class="ex-jp">りょうり</span><span class="ex-arrow">+します→</span><span class="ex-result">りょうりします</span><span class="ex-bn">রান্না করা</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: て FORM ======================== -->
+<div class="section" id="sec-te">
+  <div class="section-title">ます Form → て Form<span>verb て conjugation</span></div>
+  <div class="info-box">
+    <strong>て-form (কানেক্টিং ফর্ম / সংযুক্ত রূপ):</strong> একাধিক কাজের সংযোগ ঘটানো, বিনীত অনুরোধ করা, অনুমতি নেওয়া, কিংবা কারণ নির্দেশ করার মতো বিভিন্ন পরিস্থিতিতে এটি ব্যবহৃত হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">① ます বাদ যাবে &nbsp; ② শেষ বর্ণ অনুযায়ী পরিবর্তন:</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い・ち・り</td><td>→</td><td>って</td></tr>
+          <tr><td>み・び・に</td><td>→</td><td>んで</td></tr>
+          <tr><td>き</td><td>→</td><td>いて</td></tr>
+          <tr><td>ぎ</td><td>→</td><td>いで</td></tr>
+          <tr><td>し</td><td>→</td><td>して</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かいて</span><span class="ex-bn">লিখে</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のんで</span><span class="ex-bn">পান করে</span></div>
+        <div class="ex-row"><span class="ex-jp">はなします</span><span class="ex-arrow">→</span><span class="ex-result">はなして</span><span class="ex-bn">কথা বলে</span></div>
+        <div class="ex-row"><span class="ex-jp">まちます</span><span class="ex-arrow">→</span><span class="ex-result">まって</span><span class="ex-bn">অপেক্ষা করে</span></div>
+        <div class="ex-row"><span class="ex-jp">よびます</span><span class="ex-arrow">→</span><span class="ex-result">よんで</span><span class="ex-bn">ডাকে</span></div>
+        <div class="ex-row"><span class="ex-jp">しにます</span><span class="ex-arrow">→</span><span class="ex-result">しんで</span><span class="ex-bn">মারা যায়</span></div>
+        <div class="exception-box">
+          <div class="exception-title">❗ ব্যতিক্রম</div>
+          <div class="ex-row" style="border:none;padding:2px 0"><span class="ex-jp">いきます</span><span class="ex-arrow">→</span><span class="ex-result" style="color:#c97d00">いって</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">ます বাদ গিয়ে সরাসরি <b style="color:#2a9d5c">て</b> যোগ হবে</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべて</span><span class="ex-bn">খেয়ে</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みて</span><span class="ex-bn">দেখে</span></div>
+        <div class="ex-row"><span class="ex-jp">ねます</span><span class="ex-arrow">→</span><span class="ex-result">ねて</span><span class="ex-bn">ঘুমিয়ে</span></div>
+        <div class="ex-row"><span class="ex-jp">あけます</span><span class="ex-arrow">→</span><span class="ex-result">あけて</span><span class="ex-bn">খুলে</span></div>
+        <div class="ex-row"><span class="ex-jp">でます</span><span class="ex-arrow">→</span><span class="ex-result">でて</span><span class="ex-bn">বের হয়ে</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">きて</b> &nbsp;／&nbsp; します → <b style="color:#c0392b">して</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうして</span><span class="ex-bn">পড়াশোনা করে</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじして</span><span class="ex-bn">পরিষ্কার করে</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわして</span><span class="ex-bn">ফোন করে</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: た FORM ======================== -->
+<div class="section" id="sec-ta">
+  <div class="section-title">ます Form → た Form<span>past tense conjugation</span></div>
+  <div class="info-box">
+    <strong>た-form (Past Plain form):</strong> অতীতে কোনো কাজ ইতিমধ্যে সম্পন্ন হয়েছে তা বোঝাতে, অতীত ঘটনা বা অভিজ্ঞতা প্রকাশ করতে এবং ইনফর্মাল বা ঘরোয়া কথোপকথনে অতীতকাল নির্দেশ করতে এটি ব্যবহৃত হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">① ます বাদ যাবে &nbsp; ② শেষ বর্ণ অনুযায়ী পরিবর্তন:</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い・ち・り</td><td>→</td><td>った</td></tr>
+          <tr><td>み・び・に</td><td>→</td><td>んだ</td></tr>
+          <tr><td>き</td><td>→</td><td>いた</td></tr>
+          <tr><td>ぎ</td><td>→</td><td>いだ</td></tr>
+          <tr><td>し</td><td>→</td><td>した</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かいた</span><span class="ex-bn">লিখেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のんだ</span><span class="ex-bn">পান করেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">はなします</span><span class="ex-arrow">→</span><span class="ex-result">はなした</span><span class="ex-bn">কথা বলেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">まちます</span><span class="ex-arrow">→</span><span class="ex-result">まった</span><span class="ex-bn">অপেক্ষা করেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">よびます</span><span class="ex-arrow">→</span><span class="ex-result">よんだ</span><span class="ex-bn">ডেকেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">しにます</span><span class="ex-arrow">→</span><span class="ex-result">しんだ</span><span class="ex-bn">মরেছে</span></div>
+        <div class="exception-box">
+          <div class="exception-title">❗ ব্যতিক্রম</div>
+          <div class="ex-row" style="border:none;padding:2px 0"><span class="ex-jp">いきます</span><span class="ex-arrow">→</span><span class="ex-result" style="color:#c97d00">いった</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">ます বাদ গিয়ে সরাসরি <b style="color:#2a9d5c">た</b> যোগ হবে</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべた</span><span class="ex-bn">খেয়েছে</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みた</span><span class="ex-bn">দেখেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">ねます</span><span class="ex-arrow">→</span><span class="ex-result">ねた</span><span class="ex-bn">ঘুমিয়েছে</span></div>
+        <div class="ex-row"><span class="ex-jp">あけます</span><span class="ex-arrow">→</span><span class="ex-result">あけた</span><span class="ex-bn">খুলেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">でます</span><span class="ex-arrow">→</span><span class="ex-result">でた</span><span class="ex-bn">বের হয়েছে</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">きた</b> &nbsp;／&nbsp; します → <b style="color:#c0392b">した</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうした</span><span class="ex-bn">পড়াশোনা করেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじした</span><span class="ex-bn">পরিষ্কার করেছে</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわした</span><span class="ex-bn">ফোন করেছে</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: DICTIONARY FORM ======================== -->
+<div class="section" id="sec-dict">
+  <div class="section-title">ます Form → Dictionary Form<span>plain present form</span></div>
+  <div class="info-box">
+    <strong>Dictionary form (Plain form):</strong> ডিকশনারিতে ভার্বগুলো যে রূপে থাকে, কোনো কাজ বর্তমান বা ভবিষ্যতে ঘটবে তা বোঝাতে, সাধারণ বা ইনফর্মাল কথোপকথনে, এবং বিভিন্ন ব্যাকরণগত স্ট্রাকচার তৈরিতে মূল ভার্ব হিসেবে এটি ব্যবহৃত হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">① ます বাদ যাবে &nbsp; ② <b>い কলাম → う কলামে</b> যাবে:</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>き</td><td>→</td><td>く</td></tr>
+          <tr><td>し</td><td>→</td><td>す</td></tr>
+          <tr><td>ち</td><td>→</td><td>つ</td></tr>
+          <tr><td>り</td><td>→</td><td>る</td></tr>
+          <tr><td>み</td><td>→</td><td>む</td></tr>
+          <tr><td>に</td><td>→</td><td>ぬ</td></tr>
+          <tr><td>び</td><td>→</td><td>ぶ</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かく</span><span class="ex-bn">লেখা</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のむ</span><span class="ex-bn">পান করা</span></div>
+        <div class="ex-row"><span class="ex-jp">はしります</span><span class="ex-arrow">→</span><span class="ex-result">はしる</span><span class="ex-bn">দৌড়ানো</span></div>
+        <div class="ex-row"><span class="ex-jp">あそびます</span><span class="ex-arrow">→</span><span class="ex-result">あそぶ</span><span class="ex-bn">খেলা</span></div>
+        <div class="ex-row"><span class="ex-jp">しにます</span><span class="ex-arrow">→</span><span class="ex-result">しぬ</span><span class="ex-bn">মারা যাওয়া</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">ます বাদ গিয়ে সরাসরি <b style="color:#2a9d5c">る</b> যোগ হবে</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべる</span><span class="ex-bn">খাওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みる</span><span class="ex-bn">দেখা</span></div>
+        <div class="ex-row"><span class="ex-jp">おしえます</span><span class="ex-arrow">→</span><span class="ex-result">おしえる</span><span class="ex-bn">শেখানো</span></div>
+        <div class="ex-row"><span class="ex-jp">かけます</span><span class="ex-arrow">→</span><span class="ex-result">かける</span><span class="ex-bn">ঝুলানো / ফোন করা</span></div>
+        <div class="ex-row"><span class="ex-jp">あげます</span><span class="ex-arrow">→</span><span class="ex-result">あげる</span><span class="ex-bn">দেওয়া</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます ↔ <b style="color:#c0392b">くる</b> &nbsp;／&nbsp; します ↔ <b style="color:#c0392b">する</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうする</span><span class="ex-bn">পড়াশোনা করা</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじする</span><span class="ex-bn">পরিষ্কার করা</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわする</span><span class="ex-bn">ফোন করা</span></div>
+        <div class="ex-row"><span class="ex-jp">れんしゅうします</span><span class="ex-arrow">→</span><span class="ex-result">れんしゅうする</span><span class="ex-bn">অনুশীলন করা</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: ない FORM ======================== -->
+<div class="section" id="sec-nai">
+  <div class="section-title">ます Form → ない Form<span>negative plain form</span></div>
+  <div class="info-box">
+    <strong>ない-form (Negative Plain form):</strong> কোনো কাজ না করা বা অস্বীকার করা, নিষেধ করা, কিংবা বিনীতভাবে কোনো কিছু নিষেধ বা না করার অনুরোধ জানাতে এটি ব্যবহৃত হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">① ます বাদ যাবে &nbsp; ② <b>い কলাম → あ কলামে</b> যাবে &nbsp; ③ <b>ない</b> যোগ হবে</div>
+        <div class="rule-item" style="color:#c0392b">❗ বিশেষ নিয়ম: শেষে যদি い কলামের “い” থাকে, তাহলে あ না হয়ে わ হবে</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>き</td><td>→</td><td>か + ない</td></tr>
+          <tr><td>ぎ</td><td>→</td><td>が + ない</td></tr>
+          <tr><td>し</td><td>→</td><td>さ + ない</td></tr>
+          <tr><td>ち</td><td>→</td><td>た + ない</td></tr>
+          <tr><td>り</td><td>→</td><td>ら + ない</td></tr>
+          <tr><td>み</td><td>→</td><td>ま + ない</td></tr>
+          <tr><td>に</td><td>→</td><td>な + ない</td></tr>
+          <tr><td>び</td><td>→</td><td>ば + ない</td></tr>
+          <tr><td style="color:#c0392b">い (verb stem)</td><td>→</td><td style="color:#c0392b">わ + ない ⚠️</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かかない</span><span class="ex-bn">লিখে না</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のまない</span><span class="ex-bn">পান করে না</span></div>
+        <div class="ex-row"><span class="ex-jp">はなします</span><span class="ex-arrow">→</span><span class="ex-result">はなさない</span><span class="ex-bn">কথা বলে না</span></div>
+        <div class="ex-row"><span class="ex-jp">まちます</span><span class="ex-arrow">→</span><span class="ex-result">またない</span><span class="ex-bn">অপেক্ষা করে না</span></div>
+        <div class="ex-row"><span class="ex-jp">あいます</span><span class="ex-arrow">→</span><span class="ex-result">あわない</span><span class="ex-bn">মিলিত হয় না</span></div>
+        <div class="exception-box">
+          <div class="exception-title">❗ ব্যতিক্রম Verb</div>
+          <div class="ex-row" style="border:none;padding:2px 0"><span class="ex-jp">あります</span><span class="ex-arrow">→</span><span class="ex-result" style="color:#c97d00">ない</span><span class="ex-bn">নেই / থাকা নেই</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">ます বাদ গিয়ে সরাসরি <b style="color:#2a9d5c">ない</b> যোগ হবে</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべない</span><span class="ex-bn">খায় না</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みない</span><span class="ex-bn">দেখে না</span></div>
+        <div class="ex-row"><span class="ex-jp">ねます</span><span class="ex-arrow">→</span><span class="ex-result">ねない</span><span class="ex-bn">ঘুমায় না</span></div>
+        <div class="ex-row"><span class="ex-jp">あけます</span><span class="ex-arrow">→</span><span class="ex-result">あけない</span><span class="ex-bn">খোলে না</span></div>
+        <div class="ex-row"><span class="ex-jp">でます</span><span class="ex-arrow">→</span><span class="ex-result">でない</span><span class="ex-bn">বের হয় না</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">こない</b> &nbsp;／&nbsp; します → <b style="color:#c0392b">しない</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうしない</span><span class="ex-bn">পড়াশোনা করে না</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわしない</span><span class="ex-bn">ফোন করে না</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじしない</span><span class="ex-bn">পরিষ্কার করে না</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: なかった FORM ======================== -->
+<div class="section" id="sec-nakatta">
+  <div class="section-title">ます Form → なかった Form<span>past negative plain form</span></div>
+  <div class="info-box">
+    <strong>なかった-form (Past Negative Plain form):</strong> অতীতে কোনো কাজ করা হয়নি বা ঘটেনি তা বোঝাতে এবং অতীতে কোনো ঘটনার অনুপস্থিতি বা অস্বীকৃতি প্রকাশ করতে এটি ব্যবহৃত হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">① ます বাদ যাবে &nbsp; ② <b>い কলাম → あ কলামে</b> যাবে &nbsp; ③ <b>なかった</b> যোগ হবে</div>
+        <div class="rule-item" style="color:#c0392b">❗ বিশেষ নিয়ম: শেষে যদি い কলামের “い” থাকে, তাহলে あ না হয়ে わ হবে</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>き</td><td>→</td><td>か + なかった</td></tr>
+          <tr><td>ぎ</td><td>→</td><td>が + なかった</td></tr>
+          <tr><td>し</td><td>→</td><td>さ + なかった</td></tr>
+          <tr><td>ち</td><td>→</td><td>た + なかった</td></tr>
+          <tr><td>り</td><td>→</td><td>ら + なかった</td></tr>
+          <tr><td>み</td><td>→</td><td>ま + なかった</td></tr>
+          <tr><td>に</td><td>→</td><td>な + なかった</td></tr>
+          <tr><td>び</td><td>→</td><td>ば + なかった</td></tr>
+          <tr><td style="color:#c0392b">い (verb stem)</td><td>→</td><td style="color:#c0392b">わ + なかった ⚠️</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かかなかった</span><span class="ex-bn">লিখেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のまなかった</span><span class="ex-bn">পান করেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">はなします</span><span class="ex-arrow">→</span><span class="ex-result">はなさなかった</span><span class="ex-bn">কথা বলেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">まちます</span><span class="ex-arrow">→</span><span class="ex-result">またなかった</span><span class="ex-bn">অপেক্ষা করেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">あいます</span><span class="ex-arrow">→</span><span class="ex-result">あわなかった</span><span class="ex-bn">মিলিত হয়নি</span></div>
+        <div class="exception-box">
+          <div class="exception-title">❗ ব্যতিক্রম Verb</div>
+          <div class="ex-row" style="border:none;padding:2px 0"><span class="ex-jp">あります</span><span class="ex-arrow">→</span><span class="ex-result" style="color:#c97d00">なかった</span><span class="ex-bn">ছিল না</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">ます বাদ গিয়ে সরাসরি <b style="color:#2a9d5c">なかった</b> যোগ হবে</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべなかった</span><span class="ex-bn">খায়নি</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みなかった</span><span class="ex-bn">দেখেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">ねます</span><span class="ex-arrow">→</span><span class="ex-result">ねなかった</span><span class="ex-bn">ঘুমায়নি</span></div>
+        <div class="ex-row"><span class="ex-jp">あけます</span><span class="ex-arrow">→</span><span class="ex-result">あけなかった</span><span class="ex-bn">খোলেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">でます</span><span class="ex-arrow">→</span><span class="ex-result">でなかった</span><span class="ex-bn">বের হয়নি</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">こなかった</b> &nbsp;／&nbsp; します → <b style="color:#c0392b">しなかった</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうしなかった</span><span class="ex-bn">পড়াশোনা করেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわしなかった</span><span class="ex-bn">ফোন করেনি</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじしなかった</span><span class="ex-bn">পরিষ্কার করেনি</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: POTENTIAL FORM ======================== -->
+<div class="section" id="sec-potential">
+  <div class="section-title">ます Form → かのうけい Form<span>potential form</span></div>
+  <div class="info-box">
+    <strong>かのうけい form (Potential form):</strong> কোনো কাজ করার ক্ষমতা, দক্ষতা বা সামর্থ্য আছে (যেমন: "পার, পারা যায়") তা বোঝাতে এবং কোনো নির্দিষ্ট পরিস্থিতিতে কোনো কিছু করা সম্ভব কি না তা প্রকাশ করতে এটি ব্যবহৃত হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem এর শেষের বর্ণটি <b>い কলাম → え কলামে</b> যাবে + ます / る</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い</td><td>→</td><td>え</td></tr>
+          <tr><td>き</td><td>→</td><td>け</td></tr>
+          <tr><td>し</td><td>→</td><td>せ</td></tr>
+          <tr><td>ち</td><td>→</td><td>て</td></tr>
+          <tr><td>り</td><td>→</td><td>れ</td></tr>
+          <tr><td>み</td><td>→</td><td>め</td></tr>
+          <tr><td>に</td><td>→</td><td>ね</td></tr>
+          <tr><td>び</td><td>→</td><td>べ</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かけます</span><span class="ex-bn">লিখতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のめます</span><span class="ex-bn">পান করতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">はしります</span><span class="ex-arrow">→</span><span class="ex-result">はしれます</span><span class="ex-bn">দৌড়াতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">あそびます</span><span class="ex-arrow">→</span><span class="ex-result">あそべます</span><span class="ex-bn">খেলা করতে পারা</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem + <b style="color:#2a9d5c">られ</b> + ます / る</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべられます</span><span class="ex-bn">খেতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みられます</span><span class="ex-bn">দেখতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">おしえます</span><span class="ex-arrow">→</span><span class="ex-result">おしえられます</span><span class="ex-bn">শিখতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">あげます</span><span class="ex-arrow">→</span><span class="ex-result">あげられます</span><span class="ex-bn">দিতে পারা</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">こられます / こられる</b></div>
+        <div class="rule-item">します → <b style="color:#c0392b">できます / できる</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうできます</span><span class="ex-bn">পড়াশোনা করতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじできます</span><span class="ex-bn">পরিষ্কার করতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわできます</span><span class="ex-bn">ফোন করতে পারা</span></div>
+        <div class="ex-row"><span class="ex-jp">れんしゅうします</span><span class="ex-arrow">→</span><span class="ex-result">れんしゅうできます</span><span class="ex-bn">অনুশীলন করতে পারা</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<!-- ======================== SECTION: VOLITIONAL FORM ======================== -->
+<div class="section" id="sec-volition">
+  <div class="section-title">ます Form → いこうけい Form<span>Volitional form</span></div>
+  <div class="info-box">
+    <strong>いこうけい form (Volitional form):</strong> কোনো কাজ করার ইচ্ছা/প্রস্তাব প্রকাশ “চলুন করি”, “আমি করব”, “করার ইচ্ছা আছে”—এ ধরনের ইচ্ছা বা প্রস্তাব প্রকাশ করতে ব্যবহার হয়।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem এর শেষের বর্ণটি <b>い কলাম → お কলামে</b> যাবে + う</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い</td><td>→</td><td>お</td></tr>
+          <tr><td>き</td><td>→</td><td>こ</td></tr>
+          <tr><td>し</td><td>→</td><td>そ</td></tr>
+          <tr><td>ち</td><td>→</td><td>と</td></tr>
+          <tr><td>り</td><td>→</td><td>ろ</td></tr>
+          <tr><td>み</td><td>→</td><td>も</td></tr>
+          <tr><td>に</td><td>→</td><td>の</td></tr>
+          <tr><td>び</td><td>→</td><td>ぼ</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かこう</span><span class="ex-bn">লিখব / চলো লিখি
+</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のもう</span><span class="ex-bn">পান করব / চলো পান করি</span></div>
+        <div class="ex-row"><span class="ex-jp">はしります</span><span class="ex-arrow">→</span><span class="ex-result">はしろう</span><span class="ex-bn">চলো দৌড়াই / দৌড়াবো
+</span></div>
+        <div class="ex-row"><span class="ex-jp">あそびます</span><span class="ex-arrow">→</span><span class="ex-result">あそぼう</span><span class="ex-bn">চলো খেলা করি / মজা করি</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem + <b style="color:#2a9d5c">よう</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべよう</span><span class="ex-bn">চলো খাই / খাব
+</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みよう</span><span class="ex-bn">চলো দেখি / দেখব
+</span></div>
+        <div class="ex-row"><span class="ex-jp">おしえます</span><span class="ex-arrow">→</span><span class="ex-result">おしえよう</span><span class="ex-bn">শিখিয়ে দিই </span></div>
+        <div class="ex-row"><span class="ex-jp">あげます</span><span class="ex-arrow">→</span><span class="ex-result">あげよう</span><span class="ex-bn">দিই / চলো দিই
+</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">こよう </b></div>
+        <div class="rule-item">します → <b style="color:#c0392b"> しよう</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうしよう</span><span class="ex-bn">চলো পড়াশোনা করি </span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじしよう</span><span class="ex-bn">চলো পরিষ্কার করি</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわしよう</span><span class="ex-bn">চলো ফোন করি</span></div>
+        <div class="ex-row"><span class="ex-jp">れんしゅうします</span><span class="ex-arrow">→</span><span class="ex-result">れんしゅうしよう</span><span class="ex-bn">চলো অনুশীলন করি</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+  <!-- ======================== SECTION: POSSIVE FORM ======================== -->
+<div class="section" id="sec-possive">
+  <div class="section-title">ます Form → うけみけい Form<span>possive form</span></div>
+  <div class="info-box">
+    <strong>うけみけい form (Possive form):</strong> যখন কোন কাজ নিজে করা বোঝায় না, বরং অন্যের দ্বারা বা সাধারণভাবে ‘করা হয়/হয়েছে’ বোঝায়। <br>
+Active Voice-এ কে কাজটি করেছে তা গুরুত্বপূর্ণ, আর Passive Voice-এ কার ওপর কাজটি হয়েছে তা গুরুত্বপূর্ণ। <br>
+→ শিক্ষক আমাকে প্রশংসা করেছেন। (Active) <br>
+→ আমি শিক্ষকের দ্বারা প্রশংসিত হয়েছি।(Passive)
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem এর শেষের বর্ণটি <b>い কলাম → あ কলামে</b> যাবে + れます</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い</td><td>→</td><td>あ</td></tr>
+          <tr><td>き</td><td>→</td><td>か</td></tr>
+          <tr><td>し</td><td>→</td><td>さ</td></tr>
+          <tr><td>ち</td><td>→</td><td>た</td></tr>
+          <tr><td>り</td><td>→</td><td>ら</td></tr>
+          <tr><td>み</td><td>→</td><td>ま</td></tr>
+          <tr><td>に</td><td>→</td><td>な</td></tr>
+          <tr><td>び</td><td>→</td><td>ば</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かかれます</span><span class="ex-bn">লেখা হয়
+</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のまれます</span><span class="ex-bn">পান করা হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">はしります</span><span class="ex-arrow">→</span><span class="ex-result">はしられます</span><span class="ex-bn">দৌরানো হয়
+</span></div>
+        <div class="ex-row"><span class="ex-jp">あそびます</span><span class="ex-arrow">→</span><span class="ex-result">あそばれます</span><span class="ex-bn">চলো খেলা হয়</span></div>
+      </div>
+    </div>
+
+        <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem + <b style="color:#2a9d5c">られ</b> + ます / る</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべられます</span><span class="ex-bn">খাওয়ার হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みられます</span><span class="ex-bn">দেখা হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">おしえます</span><span class="ex-arrow">→</span><span class="ex-result">おしえられます</span><span class="ex-bn">শিখানো হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">あげます</span><span class="ex-arrow">→</span><span class="ex-result">あげられます</span><span class="ex-bn">দেওয়া হয়</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">こられます </b></div>
+        <div class="rule-item">します → <b style="color:#c0392b">されます</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうされます</span><span class="ex-bn">পড়াশোনা করা হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじされます</span><span class="ex-bn">পরিষ্কার করা হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわされます</span><span class="ex-bn">ফোন করা হয়</span></div>
+        <div class="ex-row"><span class="ex-jp">れんしゅうします</span><span class="ex-arrow">→</span><span class="ex-result">れんしゅうされます</span><span class="ex-bn">অনুশীলন করা হয়</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+  <!-- ======================== SECTION: CAUSATIVE FORM
+======================== -->
+<div class="section" id="sec-causative">
+  <div class="section-title">ます Form → しえきけい Form<span>possive form</span></div>
+  <div class="info-box">
+    <strong>しえきけい form (Causative Form):</strong> কাউকে দিয়ে কিছু করানো” বা “কাউকে কিছু করতে দেওয়া। <br>
+আমি → অন্য কাউকে → কাজটি করাই/করতে দিই। <br>
+কাকে করানো হচ্ছে তার পর に বা を বসে।
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem এর শেষের বর্ণটি <b>い কলাম → あ কলামে</b> যাবে + せます</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い</td><td>→</td><td>あ</td></tr>
+          <tr><td>き</td><td>→</td><td>か</td></tr>
+          <tr><td>し</td><td>→</td><td>さ</td></tr>
+          <tr><td>ち</td><td>→</td><td>た</td></tr>
+          <tr><td>り</td><td>→</td><td>ら</td></tr>
+          <tr><td>み</td><td>→</td><td>ま</td></tr>
+          <tr><td>に</td><td>→</td><td>な</td></tr>
+          <tr><td>び</td><td>→</td><td>ば</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かかせます</span><span class="ex-bn">লেখতে দেওয়া
+</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のませます</span><span class="ex-bn">পান করতে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">はしります</span><span class="ex-arrow">→</span><span class="ex-result">はしらせます</span><span class="ex-bn">দৌরাতে দেওয়া
+</span></div>
+        <div class="ex-row"><span class="ex-jp">あそびます</span><span class="ex-arrow">→</span><span class="ex-result">あそばせます</span><span class="ex-bn">খেলা করতে দেওয়া</span></div>
+      </div>
+    </div>
+
+        <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem + <b style="color:#2a9d5c">させ</b> + ます</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべさせます</span><span class="ex-bn">কাউকে খেতে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みさせます</span><span class="ex-bn">দেখতে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">おしえます</span><span class="ex-arrow">→</span><span class="ex-result">おしえさせます</span><span class="ex-bn">শিখিয়ে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">あげます</span><span class="ex-arrow">→</span><span class="ex-result">あげさせます</span><span class="ex-bn">দিতে দেওয়া</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">こさせます </b></div>
+        <div class="rule-item">します → <b style="color:#c0392b">させます</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうさせます</span><span class="ex-bn">পড়াশোনা করতে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじさせます</span><span class="ex-bn">পরিষ্কার করতে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわさせます</span><span class="ex-bn">ফোন করতে দেওয়া</span></div>
+        <div class="ex-row"><span class="ex-jp">れんしゅうします</span><span class="ex-arrow">→</span><span class="ex-result">れんしゅうさせます</span><span class="ex-bn">অনুশীলন করতে দেওয়া</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: CONDITIONAL FORM (じょうけんけい) ======================== -->
+<div class="section" id="sec-conditional">
+  <div class="section-title">ば Form → じょうけんけい Form<span>conditional form</span></div>
+  <div class="info-box">
+    <strong>じょうけんけい form (Conditional Form):</strong> কোনো কাজ বা অবস্থার শর্ত বোঝানো হয়। "যদি... তবে..."। <br>
+    কোনো নির্দিষ্ট ঘটনা ঘটলে বা শর্ত পূরণ হলে তবেই পরবর্তী কাজটি হবে—এমন পরিস্থিতি প্রকাশ করতে এই রূপটি ব্যবহার করা হয়। <br>
+    যেমন: "যদি টাকা থাকে, তবে কিনব" কিংবা "যদি আবহাওয়া ভালো হয়, তবে যাব।"
+  </div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 1 — 🔵</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem এর শেষের বর্ণটি <b>い কলাম → え কলামে</b> যাবে + ば</div>
+        <table class="conv-table" style="margin-top:8px">
+          <tr><td>い</td><td>→</td><td>え</td></tr>
+          <tr><td>き</td><td>→</td><td>け</td></tr>
+          <tr><td>し</td><td>→</td><td>せ</td></tr>
+          <tr><td>ち</td><td>→</td><td>て</td></tr>
+          <tr><td>り</td><td>→</td><td>れ</td></tr>
+          <tr><td>み</td><td>→</td><td>め</td></tr>
+          <tr><td>に</td><td>→</td><td>ね</td></tr>
+          <tr><td>び</td><td>→</td><td>べ</td></tr>
+        </table>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">かきます</span><span class="ex-arrow">→</span><span class="ex-result">かけば</span><span class="ex-bn">যদি লেখে</span></div>
+        <div class="ex-row"><span class="ex-jp">のみます</span><span class="ex-arrow">→</span><span class="ex-result">のめば</span><span class="ex-bn">যদি পান করে</span></div>
+        <div class="ex-row"><span class="ex-jp">はしります</span><span class="ex-arrow">→</span><span class="ex-result">はしれば</span><span class="ex-bn">যদি দৌড়ায়</span></div>
+        <div class="ex-row"><span class="ex-jp">あそびます</span><span class="ex-arrow">→</span><span class="ex-result">あそべば</span><span class="ex-bn">যদি খেলাধুলা করে</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 2 — 🟢</span>
+        <div class="rule-item" style="margin-top:8px">Verb এর stem + <b style="color:#2a9d5c">れば</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たべます</span><span class="ex-arrow">→</span><span class="ex-result">たべれば</span><span class="ex-bn">যদি খায়</span></div>
+        <div class="ex-row"><span class="ex-jp">みます</span><span class="ex-arrow">→</span><span class="ex-result">みれば</span><span class="ex-bn">যদি দেখে</span></div>
+        <div class="ex-row"><span class="ex-jp">おしえます</span><span class="ex-arrow">→</span><span class="ex-result">おしえれば</span><span class="ex-bn">যদি শেখায় / যদি বলে দেয়</span></div>
+        <div class="ex-row"><span class="ex-jp">あげます</span><span class="ex-arrow">→</span><span class="ex-result">あげれば</span><span class="ex-bn">যদি দেয়</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Group 3 — 🔴</span>
+        <div class="rule-item" style="margin-top:8px">きます → <b style="color:#c0392b">くれば</b></div>
+        <div class="rule-item">します → <b style="color:#c0392b">すれば</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">べんきょうします</span><span class="ex-arrow">→</span><span class="ex-result">べんきょうすれば</span><span class="ex-bn">যদি পড়াশোনা করে</span></div>
+        <div class="ex-row"><span class="ex-jp">そうじします</span><span class="ex-arrow">→</span><span class="ex-result">そうじすれば</span><span class="ex-bn">যদি পরিষ্কার করে</span></div>
+        <div class="ex-row"><span class="ex-jp">でんわします</span><span class="ex-arrow">→</span><span class="ex-result">でんわすれば</span><span class="ex-bn">যদি ফোন করে</span></div>
+        <div class="ex-row"><span class="ex-jp">れんしゅうします</span><span class="ex-arrow">→</span><span class="ex-result">れんしゅうすれば</span><span class="ex-bn">যদি অনুশীলন করে</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-title">い-Adjective, な-Adjective ও Noun এর Conditional Form</div>
+  <div class="group-grid">
+
+    <div class="group-card g1">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">い-Adjective</span>
+        <div class="rule-item" style="margin-top:8px">い-adj → <b>い বাদ দিয়ে</b> + ければ</div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">たかい</span><span class="ex-arrow">→</span><span class="ex-result">たかければ</span><span class="ex-bn">যদি দাম হয়</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g2">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">な-Adjective</span>
+        <div class="rule-item" style="margin-top:8px">な-adj → <b style="color:#2a9d5c">なら</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">げんきな</span><span class="ex-arrow">→</span><span class="ex-result">げんきなら</span><span class="ex-bn">যদি সুস্থ হয়</span></div>
+      </div>
+    </div>
+
+    <div class="group-card g3">
+      <div class="group-header">
+        <span class="group-dot"></span><span class="group-name">Noun</span>
+        <div class="rule-item" style="margin-top:8px">Noun → <b style="color:#c0392b">なら</b></div>
+      </div>
+      <div class="group-body">
+        <div class="examples-label">উদাহরণ</div>
+        <div class="ex-row"><span class="ex-jp">あめ</span><span class="ex-arrow">→</span><span class="ex-result">あめなら</span><span class="ex-bn">বৃষ্টি হলে</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SECTION: POLITE VS PLAIN ======================== -->
+<div class="section" id="sec-tense">
+  <div class="section-title">Polite Style vs Plain Style</div>
+
+  <!-- VERB -->
+  <div class="sub-title">Verb এর Polite Style ও Plain Style <span>かく (লেখা) দিয়ে উদাহরণ</span></div>
+  <div class="tense-table-wrap">
+    <table class="tense-table">
+      <thead>
+        <tr>
+          <th>Tense</th>
+          <th>🔵 Polite Style<br><span style="font-weight:400;font-size:10px;color:#8a7f70">です・ます style</span></th>
+          <th>⚪ Plain Style<br><span style="font-weight:400;font-size:10px;color:#8a7f70">Dictionary style</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="positive">
+          <td><div class="tense-label">Present / Future</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">かきます <span class="jp-form" style="background:#e8f5ec;color:#2a9d5c">ます</span></div>
+            <div class="bn">লিখে / লিখবে</div>
+          </td>
+          <td>
+            <div class="jp-main">かく <span class="jp-form" style="background:#edf0ff;color:#4a5ff0">dict form</span></div>
+            <div class="bn">লিখে / লিখবে</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Present / Future</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">かきません <span class="jp-form" style="background:#fff0ee;color:#c0392b">ません</span></div>
+            <div class="bn">লিখে না / লিখবে না</div>
+          </td>
+          <td>
+            <div class="jp-main">かかない <span class="jp-form" style="background:#fdf0ff;color:#9b3dbf">ない form</span></div>
+            <div class="bn">লিখে না / লিখবে না</div>
+          </td>
+        </tr>
+        <tr class="positive">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">かきました <span class="jp-form" style="background:#e8f5ec;color:#2a9d5c">ました</span></div>
+            <div class="bn">লিখেছিল</div>
+          </td>
+          <td>
+            <div class="jp-main">かいた <span class="jp-form" style="background:#edf0ff;color:#4a5ff0">た form</span></div>
+            <div class="bn">লিখেছিল</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">かきませんでした <span class="jp-form" style="background:#fff0ee;color:#c0392b">ませんでした</span></div>
+            <div class="bn">লিখেনি</div>
+          </td>
+          <td>
+            <div class="jp-main">かかなかった <span class="jp-form" style="background:#fdf0ff;color:#9b3dbf">なかった</span></div>
+            <div class="bn">লিখেনি</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- NOUN -->
+  <div class="sub-title">Noun এর Polite Style ও Plain Style <span>あめ (বৃষ্টি) দিয়ে উদাহরণ</span></div>
+  <div class="tense-table-wrap">
+    <table class="tense-table">
+      <thead>
+        <tr>
+          <th>Tense</th>
+          <th>🔵 Polite Style</th>
+          <th>⚪ Plain Style</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="positive">
+          <td><div class="tense-label">Present</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">あめです</div>
+            <div class="bn">Noun + です</div>
+          </td>
+          <td>
+            <div class="jp-main">あめだ</div>
+            <div class="bn">Noun + だ</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Present</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">あめじゃないです</div>
+            <div class="bn">Noun + じゃないです</div>
+          </td>
+          <td>
+            <div class="jp-main">あめじゃない</div>
+            <div class="bn">Noun + じゃない</div>
+          </td>
+        </tr>
+        <tr class="positive">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">あめでした</div>
+            <div class="bn">Noun + でした</div>
+          </td>
+          <td>
+            <div class="jp-main">あめだった</div>
+            <div class="bn">Noun + だった</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">あめじゃなかったです</div>
+            <div class="bn">Noun + じゃなかったです</div>
+          </td>
+          <td>
+            <div class="jp-main">あめじゃなかった</div>
+            <div class="bn">Noun + じゃなかった</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- な-ADJECTIVE -->
+  <div class="sub-title">な-Adjective এর Polite Style ও Plain Style <span>しずか (শান্ত) দিয়ে উদাহরণ</span></div>
+  <div class="tense-table-wrap">
+    <table class="tense-table">
+      <thead>
+        <tr>
+          <th>Tense</th>
+          <th>🔵 Polite Style</th>
+          <th>⚪ Plain Style</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="positive">
+          <td><div class="tense-label">Present</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">しずかです</div>
+            <div class="bn">な-A + です</div>
+          </td>
+          <td>
+            <div class="jp-main">しずかだ</div>
+            <div class="bn">な-A + だ</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Present</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">しずかじゃないです</div>
+            <div class="bn">な-A + じゃないです</div>
+          </td>
+          <td>
+            <div class="jp-main">しずかじゃない</div>
+            <div class="bn">な-A + じゃない</div>
+          </td>
+        </tr>
+        <tr class="positive">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">しずかでした</div>
+            <div class="bn">な-A + でした</div>
+          </td>
+          <td>
+            <div class="jp-main">しずかだった</div>
+            <div class="bn">な-A + だった</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">しずかじゃなかったです</div>
+            <div class="bn">な-A + じゃなかったです</div>
+          </td>
+          <td>
+            <div class="jp-main">しずかじゃなかった</div>
+            <div class="bn">な-A + じゃなかった</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- い-ADJECTIVE -->
+  <div class="sub-title">い-Adjective এর Polite Style ও Plain Style <span>おいしい (সুস্বাদু) দিয়ে উদাহরণ</span></div>
+  <div class="tense-table-wrap">
+    <table class="tense-table">
+      <thead>
+        <tr>
+          <th>Tense</th>
+          <th>🔵 Polite Style</th>
+          <th>⚪ Plain Style</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="positive">
+          <td><div class="tense-label">Present</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">おいしいです</div>
+            <div class="bn">い-A + です</div>
+          </td>
+          <td>
+            <div class="jp-main">おいしい</div>
+            <div class="bn">ই-A (যেমন আছে)</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Present</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">おいしくないです</div>
+            <div class="bn">い বাদ → くないです</div>
+          </td>
+          <td>
+            <div class="jp-main">おいしくない</div>
+            <div class="bn">い বাদ → くない</div>
+          </td>
+        </tr>
+        <tr class="positive">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#2a9d5c;font-family:monospace">✅ Positive</div></td>
+          <td>
+            <div class="jp-main">おいしかったです</div>
+            <div class="bn">い বাদ → かったです</div>
+          </td>
+          <td>
+            <div class="jp-main">おいしかった</div>
+            <div class="bn">い বাদ → かった</div>
+          </td>
+        </tr>
+        <tr class="negative">
+          <td><div class="tense-label">Past</div><div style="font-size:11px;color:#c0392b;font-family:monospace">❌ Negative</div></td>
+          <td>
+            <div class="jp-main">おいしくなかったです</div>
+            <div class="bn">い বাদ → くなかったです</div>
+          </td>
+          <td>
+            <div class="jp-main">おいしくなかった</div>
+            <div class="bn">い বাদ → くなかった</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">ট্যাব বদলে বিভিন্ন form দেখুন</div>
+
+<script>
+document.querySelectorAll(".stab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".stab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("sec-" + tab.dataset.sec).classList.add("active");
+  });
+});
+</script>
+</body>
+</html>
